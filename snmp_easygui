@@ -1,0 +1,56 @@
+from easysnmp import Session, EasySNMPConnectionError
+from requests import *
+from flask import Flask, request
+app = Flask(__name__)
+
+community = "#MVXKP3M78EQUIP#"
+community2 = "MVXKP3M78EQUIP"
+
+@app.route('/ip-port-switch', methods=['GET', 'POST'])
+def processar_dados_switch():
+    ip_cpe = request.args.get('ip_cpe')
+    porta_cpe = request.args.get('porta_cpe')
+
+    try:
+        data_cpe = Session(hostname=ip_cpe, community=community, version=2)
+
+        vendor = session.get(('sysObjectID', ''))
+        port_status = session.get(('ifOperStatus', ''))
+        mac_address = session.get(('ifPhysAddress', ''))
+        vlan = session.get(('', ''))
+        cpe_uptime = session.get(('sysUpTime', ''))
+
+    except EasySNMPConnectionError:
+        try:
+            data_cpe2 = Session(hostname=ip_cpe, community=community2, version=2)
+            vendor = session.get(('sysObjectID', ''))
+            port_status = session.get(('ifOperStatus', ''))
+            mac_address = session.get(('ifPhysAddress', ''))
+            vlan = session.get(('', ''))
+            cpe_uptime = session.get(('sysUpTime', ''))
+        except EasySNMPConnectionError:
+            return 0
+
+
+@app.route('/ip-port-cpe', methods=['GET', 'POST'])
+def processar_dados_cpe():
+    ip_equipamento = request.args.get('ip_equipamento')
+    porta_equipamento = request.args.get('porta_equipamento')
+
+    try:
+        data_equip = Session(hostname=ip_equipamento, community=community, version=2)
+        equip_uptime = session.get(('sysUpTime', ''))
+
+
+    except EasySNMPConnectionError:
+        try:
+            data_equip2 = Session(hostname=ip_equipamento, community=community2, version=2)
+
+        except EasySNMPConnectionError:
+            return 0
+
+
+
+
+
+
